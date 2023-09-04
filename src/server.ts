@@ -2,6 +2,8 @@
 import { Server } from "socket.io";
 import app from "./app";
 
+import crypto from "crypto";
+
 /**
  * Start Express server.
  */
