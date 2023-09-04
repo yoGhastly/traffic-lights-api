@@ -25,9 +25,8 @@ export const io = new Server(server, {
 
 // Store user nicknames and messages
 const users = {};
-const messages: { id: number; text: string }[] = [];
-const date = new Date();
-const now = date.getDay();
+type id = `${string}-${string}-${string}-${string}-${string}`;
+const messages: { id: id; text: string }[] = [];
 
 io.on("connection", (socket) => {
   console.log("A user connected");
@@ -35,7 +34,7 @@ io.on("connection", (socket) => {
   // Listen for incoming messages from clients
   socket.on("message", (message) => {
     const { id, text } = message;
-    const newMessage = { text, id: now };
+    const newMessage = { text, id: crypto.randomUUID() };
 
     // Store the message in the message history
     messages.push(newMessage);
