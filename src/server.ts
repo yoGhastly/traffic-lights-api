@@ -23,19 +23,34 @@ export const io = new Server(server, {
   },
 });
 
+// Store user nicknames and messages
+const users = {};
+const messages: { id: number; text: string }[] = [];
+const date = new Date();
+const now = date.getDay();
+
 io.on("connection", (socket) => {
   console.log("A user connected");
 
   // Listen for incoming messages from clients
   socket.on("message", (message) => {
+    const { id, text } = message;
+    const newMessage = { text, id: now };
+
+    // Store the message in the message history
+    messages.push(newMessage);
+
     // Broadcast the message to all connected clients
-    io.emit("message", message);
+    io.emit("message", newMessage);
   });
 
   // Handle disconnection
   socket.on("disconnect", () => {
-    console.log("A user disconnected");
+    io.emit("userList", Object.values(users));
   });
+
+  // Send message history to the newly connected client
+  socket.emit("messageHistory", messages);
 });
 
 export default server;
